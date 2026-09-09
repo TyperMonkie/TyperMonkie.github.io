@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
 
-function ParticleCar({ rebuildKey = 0 }) {
+function ParticleCar({ rebuildKey = 0, themeScatter = 190 }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -47,7 +47,7 @@ function ParticleCar({ rebuildKey = 0 }) {
       const displayHeight = height * (width < 720 ? 1.18 : 1.32);
       const displayWidth = displayHeight * sourceRatio;
       const offsetX = width / 2 - displayWidth / 2;
-      const offsetY = height * 0.52 - displayHeight / 2;
+      const offsetY = height * 0.56 - displayHeight / 2;
 
       const sample = document.createElement('canvas');
       const sampleContext = sample.getContext('2d', { willReadFrequently: true });
@@ -92,7 +92,9 @@ function ParticleCar({ rebuildKey = 0 }) {
       const maxParticles = width < 720 ? 6500 : 14000;
       const stride = Math.max(1, Math.ceil(targets.length / maxParticles));
       const selected = targets.filter((_, index) => index % stride === 0);
-      const scatter = reducedMotion ? 0 : 76;
+      // Keep the first reveal composed, then let theme changes break the form
+      // apart more dramatically before the car gathers back into focus.
+      const scatter = reducedMotion ? 0 : rebuildKey > 0 ? themeScatter : 76;
 
       particles = selected.map((target, index) => {
         const seed = ((index * 9301 + 49297) % 233280) / 233280;
@@ -218,7 +220,7 @@ function ParticleCar({ rebuildKey = 0 }) {
       if (animationFrame !== null) cancelAnimationFrame(animationFrame);
       if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
     };
-  }, [rebuildKey]);
+  }, [rebuildKey, themeScatter]);
 
   return <div ref={containerRef} className="particle-car" aria-hidden="true"><canvas ref={canvasRef} /></div>;
 }
