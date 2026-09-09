@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import ParticleCar from './components/ParticleCar'
+import Particles from './components/Particles'
 import PixelSwap from './components/PixelSwap'
 import TextType from './components/TextType'
+
+const PURPLE_PARTICLE_COLORS = ['#9b6cff', '#7c3aed', '#c4a7ff']
 
 const SunIcon = () => (
   <span className="theme-icon sun-icon" aria-hidden="true"><span className="sun-core" /></span>
@@ -13,13 +16,35 @@ const MoonIcon = () => (
 
 function App() {
   const [isLight, setIsLight] = useState(false)
+  const [particleCycle, setParticleCycle] = useState(0)
 
   useEffect(() => {
     document.documentElement.dataset.theme = isLight ? 'light' : 'dark'
   }, [isLight])
 
+  const toggleTheme = () => {
+    setIsLight(current => !current)
+    setParticleCycle(cycle => cycle + 1)
+  }
+
   return (
     <main className="home-shell">
+      <div className="background-particles" aria-hidden="true">
+        <Particles
+          particleColors={PURPLE_PARTICLE_COLORS}
+          particleCount={720}
+          particleSpread={11}
+          speed={0.085}
+          particleBaseSize={96}
+          sizeRandomness={0.85}
+          moveParticlesOnHover={false}
+          alphaParticles={false}
+          cameraDistance={20}
+          disableRotation={false}
+          pixelRatio={1.5}
+        />
+      </div>
+
       <header className="site-header">
         <a className="brand" href="#top" aria-label="AI CAR 首页">
           <span className="brand-mark" aria-hidden="true"><i /><i /><i /></span>
@@ -29,7 +54,7 @@ function App() {
         <button
           className="theme-toggle"
           type="button"
-          onClick={() => setIsLight(current => !current)}
+          onClick={toggleTheme}
           aria-label={isLight ? '切换至夜间模式' : '切换至日间模式'}
           aria-pressed={isLight}
         >
@@ -53,7 +78,7 @@ function App() {
       <section className="hero" id="top" aria-labelledby="hero-title">
         <div className="ambient ambient-one" aria-hidden="true" />
         <div className="ambient ambient-two" aria-hidden="true" />
-        <ParticleCar />
+        <ParticleCar rebuildKey={particleCycle} />
 
         <div className="hero-copy">
           <p className="eyebrow"><span /> AUTONOMOUS INTELLIGENCE</p>

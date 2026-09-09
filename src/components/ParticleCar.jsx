@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
 
-function ParticleCar() {
+function ParticleCar({ rebuildKey = 0 }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -149,16 +149,16 @@ function ParticleCar() {
           // Preserve the ParticleText idle motion, but keep it sub-pixel so the
           // vehicle silhouette remains optically locked and immediately legible.
           const driftTime = now * 0.001;
-          baseX += Math.sin(driftTime * 0.9 + particle.seed * 10) * 0.22 * particle.depth;
-          baseY += Math.cos(driftTime * 0.75 + particle.depth * 10) * 0.22 * particle.depth;
+          baseX += Math.sin(driftTime * 0.9 + particle.seed * 10) * 0.55 * particle.depth;
+          baseY += Math.cos(driftTime * 0.75 + particle.depth * 10) * 0.55 * particle.depth;
         }
 
         if (pointer.active && !reducedMotion) {
           const dx = baseX - pointer.smoothX;
           const dy = baseY - pointer.smoothY;
           const distance = Math.hypot(dx, dy);
-          if (distance > 0 && distance < 92) {
-            const force = Math.pow(1 - distance / 92, 2) * 12;
+          if (distance > 0 && distance < 210) {
+            const force = Math.pow(1 - distance / 210, 2) * 70;
             baseX += (dx / distance) * force;
             baseY += (dy / distance) * force;
           }
@@ -218,7 +218,7 @@ function ParticleCar() {
       if (animationFrame !== null) cancelAnimationFrame(animationFrame);
       if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
     };
-  }, []);
+  }, [rebuildKey]);
 
   return <div ref={containerRef} className="particle-car" aria-hidden="true"><canvas ref={canvasRef} /></div>;
 }

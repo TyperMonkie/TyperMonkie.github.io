@@ -48,15 +48,51 @@ button, a { color: inherit; }
 button { font: inherit; }
 
 .home-shell {
+  position: relative;
+  isolation: isolate;
   min-height: 100vh;
+  overflow: hidden;
   background:
-    radial-gradient(circle at 50% 57%, var(--glow), transparent 37%),
-    linear-gradient(var(--hairline) 1px, transparent 1px),
-    linear-gradient(90deg, var(--hairline) 1px, transparent 1px),
-    var(--bg);
+    radial-gradient(circle at 50% 57%, rgba(79, 221, 192, .13), transparent 37%),
+    linear-gradient(rgba(255, 255, 255, .1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .1) 1px, transparent 1px),
+    #050607;
   background-size: auto, 92px 92px, 92px 92px, auto;
   background-position: center;
-  transition: background-color 900ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.home-shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 50% 57%, rgba(8, 127, 108, .12), transparent 37%),
+    linear-gradient(rgba(17, 23, 25, .12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 23, 25, .12) 1px, transparent 1px),
+    #edf1ef;
+  background-size: auto, 92px 92px, 92px 92px, auto;
+  background-position: center;
+  transition: opacity 900ms cubic-bezier(.22, 1, .36, 1);
+}
+
+:root[data-theme='light'] .home-shell::before { opacity: 1; }
+
+.background-particles {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  opacity: .96;
+  pointer-events: none;
+}
+
+.background-particles canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 6px rgba(139, 92, 246, .86)) saturate(1.3);
 }
 
 .home-shell::after {
@@ -113,6 +149,7 @@ button { font: inherit; }
 .brand:hover .brand-mark i:first-child { height: 82%; }
 
 .theme-toggle {
+  position: relative;
   width: 48px;
   height: 48px;
   padding: 0;
@@ -127,7 +164,7 @@ button { font: inherit; }
 
 .theme-toggle:hover { border-color: var(--accent); transform: rotate(4deg); }
 .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-.theme-icon { position: absolute; inset: 0; display: grid; place-items: center; }
+.theme-icon { position: absolute; inset: 0; display: grid; place-items: center; animation: iconIn 420ms cubic-bezier(.22, 1, .36, 1) both; }
 .moon-core { width: 17px; height: 17px; border: 1.5px solid var(--text); border-radius: 50%; box-shadow: inset 5px -3px 0 0 var(--bg); transform: rotate(-18deg); }
 .sun-core { position: relative; width: 14px; height: 14px; border: 1.5px solid var(--text); border-radius: 50%; }
 .sun-core::before, .sun-core::after { content: ''; position: absolute; inset: -6px; border-top: 1px solid var(--text); border-bottom: 1px solid var(--text); transform: scaleX(.18); }
@@ -135,6 +172,7 @@ button { font: inherit; }
 
 .hero {
   position: relative;
+  z-index: 2;
   min-height: 100svh;
   overflow: hidden;
   display: grid;
@@ -147,7 +185,7 @@ button { font: inherit; }
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: radial-gradient(ellipse at center, transparent 33%, color-mix(in srgb, var(--bg) 91%, transparent) 83%);
+  background: radial-gradient(ellipse at center, transparent 48%, color-mix(in srgb, var(--bg) 24%, transparent) 100%);
   pointer-events: none;
 }
 
@@ -207,6 +245,7 @@ h1 {
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 @keyframes orbit { to { transform: rotate(360deg); } }
+@keyframes iconIn { from { opacity: 0; transform: rotate(-28deg) scale(.72); } to { opacity: 1; transform: rotate(0) scale(1); } }
 @keyframes pulse { 50% { opacity: .3; transform: scale(.72); } }
 @keyframes signal { 0%, 100% { transform: translateX(-120%); } 50% { transform: translateX(250%); } }
 @keyframes scroll { 0% { transform: translateY(0); } 100% { transform: translateY(200%); } }
