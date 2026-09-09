@@ -53,20 +53,18 @@ function App() {
       <section className="hero" id="top" aria-labelledby="hero-title">
         <div className="ambient ambient-one" aria-hidden="true" />
         <div className="ambient ambient-two" aria-hidden="true" />
-        <ParticleCar isLight={isLight} />
+        <ParticleCar />
 
         <div className="hero-copy">
           <p className="eyebrow"><span /> AUTONOMOUS INTELLIGENCE</p>
           <h1 id="hero-title">
-            <span className="sr-only">让智能，自由移动。</span>
+            <span className="sr-only">Make ideas real</span>
             <TextType
-              text={['让智能，自由移动。', '感知 · 思考 · 行动', '为真实世界而生。']}
-              typingSpeed={92}
-              deletingSpeed={42}
-              pauseDuration={2100}
-              initialDelay={700}
-              variableSpeed={{ min: 68, max: 118 }}
-              cursorCharacter="_"
+              text="Make ideas real"
+              typingSpeed={75}
+              pauseDuration={1500}
+              showCursor={true}
+              cursorCharacter="|"
               aria-hidden="true"
             />
           </h1>
