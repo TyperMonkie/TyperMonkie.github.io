@@ -5,11 +5,16 @@
   "type": "module",
   "scripts": { "dev": "vite", "build": "vite build", "preview": "vite preview" },
   "dependencies": {
+    "@react-three/drei": "^10.7.4",
+    "@react-three/fiber": "^9.3.0",
+    "@react-three/rapier": "^2.1.0",
     "@vitejs/plugin-react": "latest",
     "gsap": "^3.13.0",
+    "meshline": "^3.3.1",
     "ogl": "^1.0.11",
     "react": "latest",
     "react-dom": "latest",
+    "three": "^0.180.0",
     "vite": "latest"
   },
   "devDependencies": {}
