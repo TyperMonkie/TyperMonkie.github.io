@@ -252,6 +252,7 @@ h1 {
 
 .page-switch {
   z-index: 8;
+  bottom: clamp(98px, 11vh, 122px);
   padding: 10px 0 10px 16px;
   border: 0;
   background: transparent;
@@ -1744,6 +1745,7 @@ h1 {
   .hero-note { max-width: 84vw; margin-inline: auto; line-height: 1.7; }
   .status-line span:first-child { display: none; }
   .scroll-cue { right: 28px; }
+  .scroll-cue.page-switch { bottom: 78px; }
 
   .character-intro {
     padding: 0 24px 54px;
@@ -1841,9 +1843,7 @@ h1 {
     line-height: 1.35;
   }
 
-  .car-side .page-back {
-    bottom: 12px;
-  }
+  .car-side .page-back { bottom: 78px; }
 
   .computer-flow-panel {
     width: calc(100vw - 48px);

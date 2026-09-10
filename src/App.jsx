@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import BorderGlow from './components/BorderGlow'
+import Dock from './components/Dock'
 import ParticleCar from './components/ParticleCar'
 import Particles from './components/Particles'
 import PixelSwap from './components/PixelSwap'
@@ -165,6 +166,85 @@ const MoonIcon = () => (
   <span className="theme-icon moon-icon" aria-hidden="true"><span className="moon-core" /></span>
 )
 
+const DockGlyph = ({ type }) => {
+  const commonProps = {
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 1.65,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+  }
+
+  if (type === 'home') {
+    return (
+      <svg {...commonProps}>
+        <path d="M3.5 10.6 12 3.7l8.5 6.9" />
+        <path d="M5.7 9.2v10.4h12.6V9.2M9.4 19.6v-5.7h5.2v5.7" />
+      </svg>
+    )
+  }
+
+  if (type === 'xionger') {
+    return (
+      <svg {...commonProps}>
+        <path d="M8.1 5.4 6.5 3.8 4.7 5.6l1.5 1.5M15.9 5.4l1.6-1.6 1.8 1.8-1.5 1.5" />
+        <rect x="5.2" y="5.5" width="13.6" height="15" rx="3.1" />
+        <circle cx="9.4" cy="11" r=".75" fill="currentColor" stroke="none" />
+        <circle cx="14.6" cy="11" r=".75" fill="currentColor" stroke="none" />
+        <path d="M9.2 15.1c1.6 1.2 4 1.2 5.6 0" />
+      </svg>
+    )
+  }
+
+  if (type === 'car') {
+    return (
+      <svg {...commonProps}>
+        <path d="m5 15.5 1.6-5.1c.3-1 1.2-1.7 2.3-1.7h6.2c1.1 0 2 .7 2.3 1.7l1.6 5.1" />
+        <path d="M3.8 14.1h16.4v4.2H3.8zM7 18.3v1.4M17 18.3v1.4" />
+        <path d="M8.2 5.1h7.6M12 5.1V3" />
+        <circle cx="7.2" cy="16.1" r=".7" fill="currentColor" stroke="none" />
+        <circle cx="16.8" cy="16.1" r=".7" fill="currentColor" stroke="none" />
+      </svg>
+    )
+  }
+
+  if (type === 'computer') {
+    return (
+      <svg {...commonProps}>
+        <rect x="3.4" y="4.4" width="17.2" height="12.1" rx="1.7" />
+        <path d="m7.1 8.2 2.5 2-2.5 2M11.7 12.2h4M8.4 20h7.2M12 16.5V20" />
+      </svg>
+    )
+  }
+
+  if (type === 'models') {
+    return (
+      <svg {...commonProps}>
+        <path d="m12 3 1.5 3.8L17 8.4l-3.5 1.5L12 14l-1.5-4.1L7 8.4l3.5-1.6L12 3Z" />
+        <path d="m18.5 13.2.8 2.1 2.1.8-2.1.8-.8 2.2-.8-2.2-2.1-.8 2.1-.8.8-2.1ZM5.5 13.7l.8 1.9 1.8.7-1.8.8-.8 1.8-.7-1.8-1.9-.8 1.9-.7.7-1.9Z" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg {...commonProps}>
+      <rect x="3.6" y="5.2" width="16.8" height="13.6" rx="2.2" />
+      <path d="m10 9.1 5.3 2.9-5.3 2.9V9.1ZM8 3.2h8" />
+      <path d="M18.5 5.2 20 3.7" />
+    </svg>
+  )
+}
+
+const PAGE_NAV_ITEMS = [
+  ['首页', 'home'],
+  ['熊二', 'xionger'],
+  ['小车端', 'car'],
+  ['电脑端', 'computer'],
+  ['模型影像', 'models'],
+  ['问题演示', 'demo'],
+]
+
 function App() {
   const [isLight, setIsLight] = useState(false)
   const [particleCycle, setParticleCycle] = useState(0)
@@ -196,6 +276,13 @@ function App() {
     if (page === activePage) return 'is-active'
     return `is-inactive ${page < activePage ? 'is-before' : 'is-after'}`
   }
+
+  const dockItems = PAGE_NAV_ITEMS.map(([label, type], page) => ({
+    label,
+    icon: <DockGlyph type={type} />,
+    active: activePage === page,
+    onClick: () => showPage(page),
+  }))
 
   return (
     <main className="home-shell">
@@ -680,6 +767,14 @@ function App() {
           <span>BACK</span><i />
         </button>
       </section>
+
+      <Dock
+        items={dockItems}
+        panelHeight={68}
+        baseItemSize={50}
+        magnification={70}
+        distance={180}
+      />
     </main>
   )
 }
