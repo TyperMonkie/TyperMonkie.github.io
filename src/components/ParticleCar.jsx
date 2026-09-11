@@ -3,11 +3,13 @@ import { useEffect, useRef } from 'react';
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
 
-function ParticleCar({ rebuildKey = 0, themeScatter = 190 }) {
+function ParticleCar({ rebuildKey = 0, themeScatter = 190, active = true }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
 
   useEffect(() => {
+    if (!active) return undefined;
+
     const container = containerRef.current;
     const canvas = canvasRef.current;
     const context = canvas?.getContext('2d');
@@ -214,13 +216,14 @@ function ParticleCar({ rebuildKey = 0, themeScatter = 190 }) {
     animationFrame = requestAnimationFrame(render);
 
     return () => {
+      image.onload = null;
       observer.disconnect();
       canvas.removeEventListener('pointermove', handlePointerMove);
       canvas.removeEventListener('pointerleave', handlePointerLeave);
       if (animationFrame !== null) cancelAnimationFrame(animationFrame);
       if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
     };
-  }, [rebuildKey, themeScatter]);
+  }, [active, rebuildKey, themeScatter]);
 
   return <div ref={containerRef} className="particle-car" aria-hidden="true"><canvas ref={canvasRef} /></div>;
 }
