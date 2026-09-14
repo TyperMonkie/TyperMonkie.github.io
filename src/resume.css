@@ -261,6 +261,15 @@ html[data-site='resume'] #root {
   will-change: transform;
 }
 
+.resume-nav.is-docked {
+  position: fixed;
+  z-index: 10;
+  top: 18px;
+  left: var(--dock-left);
+  width: var(--dock-width);
+  transform: none;
+}
+
 .resume-signature {
   display: flex;
   align-items: center;
@@ -366,6 +375,7 @@ html[data-site='resume'] #root {
 }
 
 .resume-main {
+  grid-column: 2;
   min-height: 180svh;
   border-radius: 28px;
   transform: translate3d(0, var(--main-entry-y), 0) scale(var(--main-entry-scale)) rotateX(var(--main-entry-tilt));
@@ -721,6 +731,9 @@ html[data-site='resume'] #root {
   }
 
   .resume-nav {
+    position: sticky;
+    left: auto;
+    width: auto;
     top: 10px;
     z-index: 10;
     display: grid;
@@ -742,7 +755,7 @@ html[data-site='resume'] #root {
   .resume-nav nav button strong { font-size: .67rem; }
   .resume-nav nav button:hover,
   .resume-nav nav button.is-active { padding-left: 10px; background: rgba(255, 255, 255, .075); }
-  .resume-main { border-radius: 22px; }
+  .resume-main { grid-column: 1; border-radius: 22px; }
   .resume-section { scroll-margin-top: 84px; }
 }
 

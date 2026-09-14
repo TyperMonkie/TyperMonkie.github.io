@@ -15,8 +15,10 @@
 }
 
 .notes-nav {
-  position: sticky;
+  position: fixed;
   top: 18px;
+  left: max(18px, calc((100vw - 1500px) / 2));
+  width: max(220px, calc((min(100vw - 36px, 1500px) - clamp(12px, 1.3vw, 20px)) / 4));
   display: flex;
   flex-direction: column;
   height: calc(100svh - 36px);
@@ -153,6 +155,7 @@
 .notes-import > button:hover { border-color: rgba(184, 173, 255, .25); background: rgba(156, 140, 255, .08); transform: translateY(-2px); }
 
 .notes-main {
+  grid-column: 2;
   min-height: calc(100svh - 36px);
   padding: clamp(38px, 6vw, 86px) clamp(28px, 6vw, 92px) clamp(80px, 8vw, 120px);
   border-radius: 28px;
@@ -334,7 +337,7 @@
 @media (max-width: 900px) {
   .notes-site { padding: 10px; }
   .notes-shell { grid-template-columns: 1fr; }
-  .notes-nav { position: sticky; top: 10px; z-index: 12; height: auto; min-height: 0; padding: 12px 14px; border-radius: 20px; }
+  .notes-nav { position: sticky; left: auto; width: auto; top: 10px; z-index: 12; height: auto; min-height: 0; padding: 12px 14px; border-radius: 20px; }
   .notes-nav > div:first-child { display: flex; align-items: center; justify-content: space-between; }
   .notes-brand { margin: 0; }
   .notes-brand .signature-mark { display: none; }
@@ -350,7 +353,7 @@
   .notes-import > button > span:first-child { flex-basis: 28px; height: 28px; border-radius: 9px; }
   .notes-import > button > span:last-child { display: block; }
   .notes-import small { display: none; }
-  .notes-main { min-height: 100svh; border-radius: 22px; }
+  .notes-main { grid-column: 1; min-height: 100svh; border-radius: 22px; }
 }
 
 @media (max-width: 620px) {

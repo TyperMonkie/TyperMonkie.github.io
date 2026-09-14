@@ -26,6 +26,7 @@ function ResumeApp() {
   const siteRef = useRef(null)
   const heroRef = useRef(null)
   const contentShellRef = useRef(null)
+  const resumeNavRef = useRef(null)
 
   useEffect(() => {
     document.documentElement.dataset.site = 'resume'
@@ -73,6 +74,24 @@ function ResumeApp() {
       contentShellRef.current?.style.setProperty('--main-entry-y', `${(1 - delayedEase) * 62}px`)
       contentShellRef.current?.style.setProperty('--main-entry-scale', String(0.968 + delayedEase * 0.032))
       contentShellRef.current?.style.setProperty('--main-entry-tilt', `${(1 - delayedEase) * 1.4}deg`)
+
+      const contentShell = contentShellRef.current
+      const resumeNav = resumeNavRef.current
+      if (contentShell && resumeNav) {
+        const shellRect = contentShell.getBoundingClientRect()
+        const shouldDock = window.innerWidth > 900 && shellRect.top <= 18
+
+        if (shouldDock) {
+          const firstColumn = window.getComputedStyle(contentShell).gridTemplateColumns.split(' ')[0]
+          resumeNav.style.setProperty('--dock-left', `${shellRect.left}px`)
+          resumeNav.style.setProperty('--dock-width', firstColumn)
+          resumeNav.classList.add('is-docked')
+        } else {
+          resumeNav.classList.remove('is-docked')
+          resumeNav.style.removeProperty('--dock-left')
+          resumeNav.style.removeProperty('--dock-width')
+        }
+      }
     }
 
     const onScroll = () => {
@@ -89,6 +108,7 @@ function ResumeApp() {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
       if (animationFrame) window.cancelAnimationFrame(animationFrame)
+      resumeNavRef.current?.classList.remove('is-docked')
       delete document.documentElement.dataset.site
     }
   }, [])
@@ -148,7 +168,7 @@ function ResumeApp() {
       </section>
 
       <div className="resume-content-shell" ref={contentShellRef}>
-        <aside className="resume-nav glass-panel" aria-label="简历内容导航">
+        <aside ref={resumeNavRef} className="resume-nav glass-panel" aria-label="简历内容导航">
           <button className="resume-signature" type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <span className="signature-mark">Y</span>
             <span><strong>YIZE</strong><small>PERSONAL WEBSITE</small></span>
