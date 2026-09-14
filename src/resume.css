@@ -233,7 +233,6 @@ html[data-site='resume'] #root {
   width: min(calc(100% - 32px), 1500px);
   margin: -72px auto 0;
   align-items: start;
-  perspective: 1500px;
 }
 
 .glass-panel {
@@ -378,7 +377,7 @@ html[data-site='resume'] #root {
   grid-column: 2;
   min-height: 180svh;
   border-radius: 28px;
-  transform: translate3d(0, var(--main-entry-y), 0) scale(var(--main-entry-scale)) rotateX(var(--main-entry-tilt));
+  transform: perspective(1500px) translate3d(0, var(--main-entry-y), 0) scale(var(--main-entry-scale)) rotateX(var(--main-entry-tilt));
   transform-origin: 50% 0;
   will-change: transform;
 }
