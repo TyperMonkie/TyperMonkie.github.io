@@ -159,6 +159,9 @@
   min-height: calc(100svh - 36px);
   padding: clamp(38px, 6vw, 86px) clamp(28px, 6vw, 92px) clamp(80px, 8vw, 120px);
   border-radius: 28px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, .055), transparent 25%),
+    rgba(0, 0, 0, .9);
 }
 
 .notes-header {
