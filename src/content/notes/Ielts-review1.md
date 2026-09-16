@@ -1,7 +1,7 @@
 ---
 title: 雅思第一次阅读作业改错
 date: 2026-09-16
-category: 雅思
+category: 雅思阅读
 summary: 第一次阅读作业改错
 ---
 
