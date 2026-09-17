@@ -27,6 +27,8 @@ function Band({
   maxSpeed = 50,
   minSpeed = 0,
   isMobile = false,
+  cardScale = 2.25,
+  verticalOffset = 0,
   frontImage = null,
   backImage = null,
   imageFit = 'cover',
@@ -55,6 +57,7 @@ function Band({
   const texture = useTexture(lanyardImage || defaultLanyard)
   const frontTex = useTexture(frontImage || BLANK_PIXEL)
   const backTex = useTexture(backImage || BLANK_PIXEL)
+  const cardScaleRatio = cardScale / 2.25
 
   const cardMap = useMemo(() => {
     const baseMap = materials.base.map
@@ -123,7 +126,7 @@ function Band({
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1])
   useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1])
   useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1])
-  useSphericalJoint(j3, card, [[0, 0, 0], [0, 1.5, 0]])
+  useSphericalJoint(j3, card, [[0, 0, 0], [0, 1.5 * cardScaleRatio, 0]])
 
   useEffect(() => {
     if (!hovered) return undefined
@@ -178,7 +181,7 @@ function Band({
 
   return (
     <>
-      <group position={[0, 4, 0]}>
+      <group position={[0, 4 + verticalOffset, 0]}>
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
         <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
@@ -195,10 +198,12 @@ function Band({
           {...segmentProps}
           type={dragged ? 'kinematicPosition' : 'dynamic'}
         >
-          <CuboidCollider args={[0.8, 1.125, 0.01]} />
+          <CuboidCollider
+            args={[0.8 * cardScaleRatio, 1.125 * cardScaleRatio, 0.01 * cardScaleRatio]}
+          />
           <group
-            scale={2.25}
-            position={[0, -1.2, -0.05]}
+            scale={cardScale}
+            position={[0, -1.2 * cardScaleRatio, -0.05]}
             onPointerOver={() => setHovered(true)}
             onPointerOut={() => setHovered(false)}
             onPointerUp={(event) => {
@@ -251,6 +256,8 @@ export default function Lanyard({
   position = [0, 0, 24],
   gravity = [0, -40, 0],
   fov = 20,
+  cardScale = 2.25,
+  verticalOffset = 0,
   transparent = true,
   frontImage = null,
   frontImages = null,
@@ -259,6 +266,7 @@ export default function Lanyard({
   imageFit = 'cover',
   lanyardImage = null,
   lanyardWidth = 1,
+  ariaLabel = '可拖动的身份牌',
 }) {
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== 'undefined' && window.innerWidth < 768,
@@ -292,7 +300,7 @@ export default function Lanyard({
   }, [expressionFrames, frameDuration, playbackReady])
 
   return (
-    <div className="lanyard-wrapper" aria-label="可拖动的熊二身份牌">
+    <div className="lanyard-wrapper" aria-label={ariaLabel}>
       <Canvas
         camera={{ position, fov }}
         dpr={[1, isMobile ? 1.35 : 1.75]}
@@ -305,6 +313,8 @@ export default function Lanyard({
         <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
           <Band
             isMobile={isMobile}
+            cardScale={cardScale}
+            verticalOffset={verticalOffset}
             frontImage={activeFrontImage}
             backImage={backImage}
             imageFit={imageFit}

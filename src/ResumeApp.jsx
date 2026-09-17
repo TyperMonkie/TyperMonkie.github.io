@@ -1,7 +1,97 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import FallingText from './components/FallingText'
+import InfiniteMenu from './components/InfiniteMenu'
 import PortfolioBackdrop from './components/PortfolioBackdrop'
 import SplitText from './components/SplitText'
 import './resume.css'
+
+const Lanyard = lazy(() => import('./components/Lanyard'))
+
+const PROJECT_ATLAS = '/portfolio/project-atlas.png'
+const PROJECT_LANYARD_IMAGE = '/portfolio/lanyard-portrait.png'
+
+// 项目区的标题、说明、颜色与详情都集中在这里，后续修改内容只需要编辑这个数组。
+const PROJECTS = [
+  {
+    id: 'car-agent',
+    title: 'Multimodal AI Car Agent',
+    label: 'AI Car',
+    color: '#b8a6d9',
+    image: PROJECT_ATLAS,
+    crop: { x: 0, y: 0, w: .25, h: .5 },
+    description: '基于ESP32S3的多模态智能小车智能体搭建（拥有视觉，听觉和语音合成的模态）',
+    detail: '我们为小车搭建了功能展示网站',
+    tags: ['ESP32-S3', 'MULTIMODAL', 'AI AGENT'],
+    link: '#/project',
+    linkLabel: '查看功能展示网站',
+  },
+  {
+    id: 'mentor-agent',
+    title: 'Mentor Searching Agent',
+    label: 'Agent',
+    color: '#86a9b4',
+    image: PROJECT_ATLAS,
+    crop: { x: .25, y: 0, w: .25, h: .5 },
+    description: '面向研究方向、导师信息与匹配度的智能检索与推荐智能体。',
+    detail: '整合公开信息检索、兴趣抽取与候选结果排序，让导师调研过程更清晰。',
+    tags: ['SEARCH', 'RAG', 'AGENT'],
+  },
+  {
+    id: 'ego-gesture',
+    title: 'Ego Gesture Recognition',
+    label: 'Gesture',
+    color: '#c0a1b2',
+    image: PROJECT_ATLAS,
+    crop: { x: .5, y: 0, w: .25, h: .5 },
+    description: '以第一人称视觉理解手势，并将识别结果映射为可执行交互指令。',
+    detail: '项目详情暂以视觉采集、时序特征和手势分类三个模块组织，后续可继续补充实验结果。',
+    tags: ['VISION', 'GESTURE', 'CV'],
+  },
+  {
+    id: '3d-printing',
+    title: '3D Printing',
+    label: '3D',
+    color: '#b6a47f',
+    image: PROJECT_ATLAS,
+    crop: { x: .75, y: 0, w: .25, h: .5 },
+    description: '从三维建模、切片参数到成品迭代的数字制造实践。',
+    detail: '这里可以继续补充打印材料、设备参数、失败案例和最终成品展示。',
+    tags: ['CAD', 'FABRICATION', 'PROTOTYPE'],
+  },
+  {
+    id: 'running-form',
+    title: 'AI Running Form Correction Website',
+    label: 'Runform-Web',
+    color: '#829fbe',
+    image: PROJECT_ATLAS,
+    crop: { x: 0, y: .5, w: .25, h: .5 },
+    description: '通过姿态估计分析跑姿，并在网页端给出直观的动作纠正建议。',
+    detail: '后续可在这里加入动作评分、关键帧对比与个性化训练建议。',
+    tags: ['POSE', 'WEB', 'COACHING'],
+  },
+  {
+    id: 'dl-builder',
+    title: 'Deep-Learning Structure Building Platform',
+    label: 'DL-Builder',
+    color: '#9a8fbd',
+    image: PROJECT_ATLAS,
+    crop: { x: .25, y: .5, w: .25, h: .5 },
+    description: '面向深度学习结构的可视化搭建平台，用模块组合降低实验门槛。',
+    detail: '这里可以补充节点编辑、结构校验、代码导出和实验管理等平台能力。',
+    tags: ['DEEP LEARNING', 'LOW CODE', 'PLATFORM'],
+  },
+  {
+    id: 'emotion',
+    title: 'Multimodal Emotion Recognition',
+    label: 'AffectGPT',
+    color: '#b4939f',
+    image: PROJECT_ATLAS,
+    crop: { x: .5, y: .5, w: .25, h: .5 },
+    description: '融合视觉、语音与文本信号，识别更贴近真实交流场景的情绪状态。',
+    detail: '后续可补充数据集、融合策略、评估指标与实际交互效果。',
+    tags: ['EMOTION', 'FUSION', 'MULTIMODAL'],
+  },
+]
 
 const NAV_ITEMS = [
   { id: 'projects', label: '项目经历', index: '01' },
@@ -22,11 +112,15 @@ const scrollToSection = (id) => {
 
 function ResumeApp() {
   const [activeSection, setActiveSection] = useState('projects')
-  const projectCardRef = useRef(null)
+  const [selectedProject, setSelectedProject] = useState(0)
+  const [expandedProject, setExpandedProject] = useState(null)
+  const [projectLanyardVisible, setProjectLanyardVisible] = useState(false)
+  const projectSelectionLockRef = useRef(0)
   const siteRef = useRef(null)
   const heroRef = useRef(null)
   const contentShellRef = useRef(null)
   const resumeNavRef = useRef(null)
+  const projectLanyardRef = useRef(null)
 
   useEffect(() => {
     document.documentElement.dataset.site = 'resume'
@@ -56,6 +150,12 @@ function ResumeApp() {
       const section = document.getElementById(id)
       if (section) sectionObserver.observe(section)
     })
+
+    const lanyardObserver = new IntersectionObserver(
+      ([entry]) => setProjectLanyardVisible(entry.isIntersecting),
+      { rootMargin: '120px 0px', threshold: 0.01 },
+    )
+    if (projectLanyardRef.current) lanyardObserver.observe(projectLanyardRef.current)
 
     let animationFrame
     const updateScrollPull = () => {
@@ -105,6 +205,7 @@ function ResumeApp() {
     return () => {
       revealObserver.disconnect()
       sectionObserver.disconnect()
+      lanyardObserver.disconnect()
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
       if (animationFrame) window.cancelAnimationFrame(animationFrame)
@@ -113,28 +214,13 @@ function ResumeApp() {
     }
   }, [])
 
-  const updateCardLight = (event) => {
-    const card = projectCardRef.current
-    if (!card) return
-    const rect = card.getBoundingClientRect()
-    const x = event.clientX - rect.left
-    const y = event.clientY - rect.top
-    card.style.setProperty('--pointer-x', `${x}px`)
-    card.style.setProperty('--pointer-y', `${y}px`)
-    card.style.setProperty('--tilt-x', `${((y / rect.height) - 0.5) * -2.2}deg`)
-    card.style.setProperty('--tilt-y', `${((x / rect.width) - 0.5) * 2.2}deg`)
+  const chooseProject = (index, lock = false) => {
+    if (lock) projectSelectionLockRef.current = Date.now() + 1400
+    setSelectedProject(index)
   }
 
-  const resetCard = () => {
-    const card = projectCardRef.current
-    if (!card) return
-    card.style.setProperty('--tilt-x', '0deg')
-    card.style.setProperty('--tilt-y', '0deg')
-  }
-
-  const openProject = () => {
-    window.location.hash = '/project'
-  }
+  const detailProjectIndex = expandedProject ?? selectedProject
+  const detailProject = PROJECTS[detailProjectIndex]
 
   return (
     <main className="resume-site" ref={siteRef}>
@@ -200,32 +286,95 @@ function ResumeApp() {
               <div className="section-rule" />
             </header>
 
-            <article
-              className="project-feature"
-              ref={projectCardRef}
-              onPointerMove={updateCardLight}
-              onPointerLeave={resetCard}
-              data-reveal
-            >
-              <div className="project-card-glow" aria-hidden="true" />
-              <div className="project-meta">
-                <span>FEATURED PROJECT</span>
-                <span>2026</span>
+            <div className="project-lab" data-reveal>
+              <div className="project-lab-meta">
+                <span>INTERACTIVE PROJECT INDEX</span>
+                <span>07 PROJECTS · 2026</span>
               </div>
-              <div className="project-copy">
-                <p className="project-index">PROJECT / 001</p>
-                <h3><span>基于 ESP32-S3 的</span><span>多模态智能体搭建</span></h3>
-                <p className="project-description">
-                  从感知、推理到动作执行，让小车拥有视觉、语音、表情与自主工具调用能力的完整智能体实践。
-                </p>
+
+              <div className="project-lab-top">
+                <div className="project-lanyard" ref={projectLanyardRef}>
+                  {projectLanyardVisible && (
+                    <Suspense fallback={<div className="lanyard-loading" aria-hidden="true" />}>
+                      <Lanyard
+                        key="project-lanyard-raised"
+                        position={[0, 0, 24]}
+                        gravity={[0, -40, 0]}
+                        cardScale={4.5}
+                        verticalOffset={1.8}
+                        frontImage={PROJECT_LANYARD_IMAGE}
+                        backImage={PROJECT_LANYARD_IMAGE}
+                        imageFit="cover"
+                        lanyardWidth={1}
+                        ariaLabel="可拖动的项目身份牌"
+                      />
+                    </Suspense>
+                  )}
+                  <span className="project-lanyard-label">DRAG THE ID CARD</span>
+                </div>
+
+                <FallingText
+                  className="project-falling-text"
+                  items={PROJECTS}
+                  selectedIndex={selectedProject}
+                  onItemSelect={(index) => chooseProject(index, true)}
+                  trigger="scroll"
+                  gravity={.56}
+                  fontSize="clamp(1.75rem, 3vw, 2.6rem)"
+                  mouseConstraintStiffness={.9}
+                />
               </div>
-              <div className="project-tech" aria-label="项目技术标签">
-                <span>ESP32-S3</span><span>MULTIMODAL</span><span>AI AGENT</span>
+
+              <div className={`project-explorer${expandedProject !== null ? ' is-expanded' : ''}`}>
+                <div className="project-orbit-panel">
+                  <InfiniteMenu
+                    items={PROJECTS}
+                    activeIndex={selectedProject}
+                    onActiveItemChange={(index) => {
+                      if (Date.now() >= projectSelectionLockRef.current) chooseProject(index)
+                    }}
+                    onAction={(index) => {
+                      setSelectedProject(index)
+                      setExpandedProject(index)
+                    }}
+                    scale={1.08}
+                    backgroundColor="rgba(7, 6, 14, .72)"
+                  />
+                </div>
+
+                <aside className="project-detail" aria-hidden={expandedProject === null}>
+                  <button
+                    className="project-detail-close"
+                    type="button"
+                    onClick={() => setExpandedProject(null)}
+                    aria-label="关闭项目详情"
+                    tabIndex={expandedProject === null ? -1 : 0}
+                  >
+                    ×
+                  </button>
+                  <span className="project-detail-index">PROJECT / {String(detailProjectIndex + 1).padStart(3, '0')}</span>
+                  <h3>{detailProject.title}</h3>
+                  <p className="project-detail-description">{detailProject.description}</p>
+                  <div className="project-detail-rule" />
+                  <p className="project-detail-body">{detailProject.detail}</p>
+                  <div className="project-detail-tags">
+                    {detailProject.tags.map((tag) => <span key={tag}>{tag}</span>)}
+                  </div>
+                  {detailProject.link ? (
+                    <button
+                      className="project-detail-link"
+                      type="button"
+                      tabIndex={expandedProject === null ? -1 : 0}
+                      onClick={() => { window.location.hash = detailProject.link.replace('#', '') }}
+                    >
+                      <span>{detailProject.linkLabel}</span><ArrowIcon />
+                    </button>
+                  ) : (
+                    <span className="project-detail-pending">MORE CONTENT COMING SOON</span>
+                  )}
+                </aside>
               </div>
-              <button className="project-link" type="button" onClick={openProject}>
-                <span>进入项目</span><ArrowIcon />
-              </button>
-            </article>
+            </div>
           </section>
 
           <section className="resume-section placeholder-section" id="experience">
