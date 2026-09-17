@@ -26,12 +26,18 @@ importers:
       dompurify:
         specifier: ^3.4.15
         version: 3.4.15
+      gl-matrix:
+        specifier: ^3.4.4
+        version: 3.4.4
       gsap:
         specifier: ^3.13.0
         version: 3.15.0
       marked:
         specifier: ^18.0.13
         version: 18.0.13
+      matter-js:
+        specifier: ^0.20.0
+        version: 0.20.0
       meshline:
         specifier: ^3.3.1
         version: 3.3.1(three@0.180.0)
@@ -349,6 +355,9 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
+  gl-matrix@3.4.4:
+    resolution: {integrity: sha512-latSnyDNt/8zYUB6VIJ6PCh2jBjJX6gnDsoCZ7LyW7GkqrD51EWwa9qCoGixj8YqBtETQK/xY7OmpTF8xz1DdQ==}
+
   glsl-noise@0.0.0:
     resolution: {integrity: sha512-b/ZCF6amfAUb7dJM/MxRs7AetQEahYzJ8PtgfrmEdtw6uyGOr+ZSGtgjFm6mfsBkxJ4d2W7kg+Nlqzqvn3Bc0w==}
 
@@ -462,6 +471,9 @@ packages:
     resolution: {integrity: sha512-xTxVzZsBFwunP6HDmtBkabUQEYArnP7/rMDGmPj9SlrKlQ4i8MdYVow+nJL0eOqwpUqhzBoTBRADGN6uYwPyOw==}
     engines: {node: '>= 20'}
     hasBin: true
+
+  matter-js@0.20.0:
+    resolution: {integrity: sha512-iC9fYR7zVT3HppNnsFsp9XOoQdQN2tUyfaKg4CHLH8bN+j6GT4Gw7IH2rP0tflAebrHFw730RR3DkVSZRX8hwA==}
 
   meshline@3.3.1:
     resolution: {integrity: sha512-/TQj+JdZkeSUOl5Mk2J7eLcYTLiQm2IDzmlSvYm7ov15anEcDJ92GHqqazxTSreeNgfnYu24kiEvvv0WlbCdFQ==}
@@ -940,6 +952,8 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
+  gl-matrix@3.4.4: {}
+
   glsl-noise@0.0.0: {}
 
   gsap@3.15.0: {}
@@ -1020,6 +1034,8 @@ snapshots:
       three: 0.180.0
 
   marked@18.0.13: {}
+
+  matter-js@0.20.0: {}
 
   meshline@3.3.1(three@0.180.0):
     dependencies:

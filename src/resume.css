@@ -228,9 +228,9 @@ html[data-site='resume'] #root {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: minmax(210px, 1fr) minmax(0, 3fr);
+  grid-template-columns: minmax(180px, 1fr) minmax(0, 4fr);
   gap: clamp(12px, 1.3vw, 20px);
-  width: min(calc(100% - 32px), 1500px);
+  width: min(calc(100% - 32px), 1680px);
   margin: -72px auto 0;
   align-items: start;
 }
@@ -239,8 +239,8 @@ html[data-site='resume'] #root {
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, .1);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, .055), transparent 25%),
-    rgba(0, 0, 0, .4);
+    linear-gradient(145deg, rgba(255, 255, 255, .045), transparent 25%),
+    rgba(0, 0, 0, .2);
   box-shadow: 0 36px 100px rgba(0, 0, 0, .32), inset 0 1px 0 rgba(255, 255, 255, .065);
   backdrop-filter: blur(26px) saturate(125%);
   -webkit-backdrop-filter: blur(26px) saturate(125%);
@@ -254,7 +254,7 @@ html[data-site='resume'] #root {
   height: calc(100svh - 36px);
   min-height: 560px;
   border-radius: 28px;
-  padding: clamp(22px, 2.4vw, 38px);
+  padding: clamp(20px, 1.8vw, 30px);
   transform: translate3d(0, var(--nav-entry-y), 0) scale(var(--nav-entry-scale));
   transform-origin: 50% 0;
   will-change: transform;
@@ -400,6 +400,7 @@ html[data-site='resume'] #root {
 
 .section-heading.is-revealed,
 .project-feature.is-revealed,
+.project-lab.is-revealed,
 .placeholder-copy.is-revealed {
   opacity: 1;
   filter: blur(0);
@@ -589,6 +590,259 @@ html[data-site='resume'] #root {
 .project-link:hover { transform: translateY(-4px); box-shadow: 0 18px 50px rgba(151, 128, 255, .22); }
 .project-link:hover svg { transform: translateX(3px) rotate(-18deg); }
 
+.project-section {
+  min-height: 158svh;
+  padding-inline: clamp(24px, 3.8vw, 66px);
+}
+
+.project-lab {
+  position: relative;
+  margin-top: clamp(38px, 5vw, 72px);
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(42px);
+  transition: opacity .9s ease .12s, filter .9s ease .12s, transform .95s cubic-bezier(.22, 1, .36, 1) .12s;
+}
+
+.project-lab-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  color: rgba(255, 255, 255, .34);
+  font-size: .55rem;
+  font-weight: 650;
+  letter-spacing: .18em;
+}
+
+.project-lab-top {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: clamp(12px, 1.4vw, 20px);
+  min-height: clamp(340px, 40svh, 470px);
+}
+
+.project-lanyard {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 50% 32%, rgba(164, 143, 221, .13), transparent 38%),
+    rgba(9, 7, 18, .32);
+}
+
+.project-lanyard::after {
+  content: '';
+  position: absolute;
+  left: 13%;
+  right: 13%;
+  bottom: 13%;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .46);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.project-lanyard .lanyard-wrapper {
+  z-index: 1;
+  height: 100%;
+  min-height: 0;
+}
+
+.project-lanyard-loading {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.04) 48%, transparent 66%);
+  background-size: 220% 100%;
+  animation: project-loading 1.8s linear infinite;
+}
+
+.project-lanyard-label {
+  position: absolute;
+  left: 18px;
+  top: 15px;
+  z-index: 3;
+  color: rgba(255, 255, 255, .25);
+  font-size: .5rem;
+  font-weight: 650;
+  letter-spacing: .19em;
+  pointer-events: none;
+}
+
+.project-explorer {
+  position: relative;
+  display: block;
+  min-height: clamp(560px, 65svh, 720px);
+  margin-top: clamp(12px, 1.4vw, 20px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 26px;
+  background: rgba(6, 5, 12, .3);
+}
+
+.project-orbit-panel {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.project-orbit-panel .infinite-menu-canvas {
+  transform: translateX(0);
+  will-change: transform;
+  transition: transform .82s cubic-bezier(.22, 1, .36, 1);
+}
+
+.project-explorer.is-expanded .project-orbit-panel .infinite-menu-canvas {
+  transform: translateX(-25%);
+}
+
+.project-detail {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  width: min(52%, 680px);
+  overflow: hidden;
+  flex-direction: column;
+  padding: clamp(28px, 4.5vw, 64px);
+  border-left: 1px solid rgba(255, 255, 255, .08);
+  background:
+    radial-gradient(circle at 100% 0, rgba(155, 140, 255, .11), transparent 37%),
+    rgba(11, 9, 20, .78);
+  opacity: 0;
+  transform: translateX(100%);
+  pointer-events: none;
+  will-change: opacity, transform;
+  transition: opacity .42s ease, transform .72s cubic-bezier(.22, 1, .36, 1);
+}
+
+.project-explorer.is-expanded .project-detail {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+  transition-delay: .1s;
+}
+
+.project-detail > * {
+  opacity: 0;
+  transform: translateX(18px);
+  transition: opacity .42s ease, transform .58s cubic-bezier(.22, 1, .36, 1);
+}
+
+.project-explorer.is-expanded .project-detail > * {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: .28s;
+}
+
+.project-explorer.is-expanded .infinite-menu-description { display: none; }
+
+.project-detail-close {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .035);
+  color: rgba(255, 255, 255, .62);
+  font-size: 1.35rem;
+  cursor: pointer;
+  transition: color .25s ease, border-color .25s ease, transform .25s ease;
+}
+
+.project-detail-close:hover { color: #fff; border-color: rgba(255, 255, 255, .28); transform: rotate(8deg); }
+
+.project-detail-index {
+  margin-top: auto;
+  color: #a99cff;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+}
+
+.project-detail h3 {
+  margin: 18px 0 22px;
+  color: #fff;
+  font-size: clamp(2rem, 3.6vw, 4.25rem);
+  font-weight: 760;
+  line-height: .98;
+  letter-spacing: -.065em;
+}
+
+.project-detail-description,
+.project-detail-body {
+  max-width: 52ch;
+  margin: 0;
+  color: rgba(244, 242, 255, .59);
+  font-size: clamp(.86rem, 1.05vw, 1rem);
+  line-height: 1.85;
+}
+
+.project-detail-rule {
+  width: 100%;
+  height: 1px;
+  margin: clamp(24px, 3vw, 38px) 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, .18), transparent);
+}
+
+.project-detail-body { color: rgba(255, 255, 255, .78); }
+
+.project-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+
+.project-detail-tags span {
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .035);
+  color: rgba(255, 255, 255, .43);
+  font-size: .5rem;
+  letter-spacing: .14em;
+}
+
+.project-detail-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  width: min(100%, 250px);
+  min-height: 58px;
+  margin-top: auto;
+  padding: 0 13px 0 22px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .94);
+  color: #08060f;
+  cursor: pointer;
+  transition: transform .35s cubic-bezier(.22, 1, .36, 1), box-shadow .35s ease;
+}
+
+.project-detail-link span { font-size: .76rem; font-weight: 700; letter-spacing: .04em; }
+.project-detail-link svg { width: 32px; height: 32px; padding: 8px; border-radius: 50%; background: #0c0915; stroke: #fff; stroke-width: 1.6; fill: none; }
+.project-detail-link:hover { transform: translateY(-4px); box-shadow: 0 18px 50px rgba(151, 128, 255, .18); }
+
+.project-detail-pending {
+  margin-top: auto;
+  color: rgba(255, 255, 255, .25);
+  font-size: .54rem;
+  letter-spacing: .18em;
+}
+
+@keyframes project-loading { to { background-position: -220% 0; } }
+
 .placeholder-section {
   display: flex;
   justify-content: center;
@@ -756,6 +1010,25 @@ html[data-site='resume'] #root {
   .resume-nav nav button.is-active { padding-left: 10px; background: rgba(255, 255, 255, .075); }
   .resume-main { grid-column: 1; border-radius: 22px; }
   .resume-section { scroll-margin-top: 84px; }
+
+  .project-section { min-height: auto; }
+  .project-lab-top { grid-template-columns: 1fr; }
+  .project-lanyard { min-height: 420px; }
+  .project-falling-text { min-height: 360px; }
+  .project-explorer.is-expanded { min-height: 1120px; }
+  .project-explorer.is-expanded .project-orbit-panel { bottom: auto; height: 560px; }
+  .project-explorer.is-expanded .project-orbit-panel .infinite-menu-canvas { transform: none; }
+  .project-detail {
+    top: 560px;
+    left: 0;
+    bottom: auto;
+    width: 100%;
+    min-height: 560px;
+    border-top: 1px solid rgba(255, 255, 255, .08);
+    border-left: 0;
+    transform: translateY(42px);
+  }
+  .project-explorer.is-expanded .project-detail { transform: translateY(0); }
 }
 
 @media (max-width: 620px) {
@@ -784,6 +1057,16 @@ html[data-site='resume'] #root {
   .notes-entry-button { width: 100%; }
   .resume-footer { padding-inline: 22px; }
   .return-home-button { top: 16px; left: 16px; }
+
+  .project-section { padding-inline: 14px; }
+  .project-lab-meta { padding-inline: 4px; font-size: .47rem; }
+  .project-lab-meta span:last-child { display: none; }
+  .project-lanyard { min-height: 390px; }
+  .project-explorer { min-height: 620px; }
+  .project-explorer.is-expanded { min-height: 1160px; }
+  .project-detail { min-height: 600px; padding: 54px 24px 28px; }
+  .project-detail h3 { font-size: clamp(2.1rem, 11vw, 3.2rem); }
+  .project-detail-link { width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -792,6 +1075,7 @@ html[data-site='resume'] #root {
   .resume-site *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
   .section-heading,
   .project-feature,
+  .project-lab,
   .placeholder-copy { opacity: 1; filter: none; transform: none; }
   .resume-grain { display: none; }
 }
