@@ -69,6 +69,7 @@ uniform float uGlow;
 uniform float uDensity;
 uniform float uTwinkle;
 uniform float uZoom;
+uniform float uHorizontalScale;
 uniform float uBgGlow;
 uniform float uOpacity;
 uniform float uMouseEnabled;
@@ -99,6 +100,7 @@ vec3 tanhv(vec3 x) {
 
 vec2 sceneC(vec2 frag, vec2 r) {
   vec2 P = (frag + frag - r) / r.x;
+  P.x *= uHorizontalScale;
   float z = 0.0;
   float d = 1e3;
   vec4 O = vec4(0.0);
@@ -196,6 +198,7 @@ const Lightfall = ({
   density = 0.6,
   twinkle = 1,
   zoom = 3,
+  horizontalScale = 1,
   backgroundGlow = 0.5,
   opacity = 1,
   mouseInteraction = true,
@@ -270,6 +273,7 @@ const Lightfall = ({
       uDensity: { value: density },
       uTwinkle: { value: twinkle },
       uZoom: { value: zoom },
+      uHorizontalScale: { value: horizontalScale },
       uBgGlow: { value: backgroundGlow },
       uOpacity: { value: opacity },
       uMouseEnabled: { value: mouseInteraction ? 1 : 0 },
@@ -354,7 +358,7 @@ const Lightfall = ({
     }
   }, [
     dpr, paused, colors, backgroundColor, speed, streakCount, streakWidth,
-    streakLength, glow, density, twinkle, zoom, backgroundGlow, opacity,
+    streakLength, glow, density, twinkle, zoom, horizontalScale, backgroundGlow, opacity,
     mouseInteraction, mouseStrength, mouseRadius, mouseDampening, lightMode, quality,
   ])
 
