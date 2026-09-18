@@ -42,8 +42,8 @@ void main() {
 }
 `
 
-const fragment = `
-precision highp float;
+const createFragment = ({ precision, sceneSteps, streakSlots }) => `
+precision ${precision} float;
 
 uniform vec3  iResolution;
 uniform vec2  iMouse;
@@ -102,7 +102,7 @@ vec2 sceneC(vec2 frag, vec2 r) {
   float z = 0.0;
   float d = 1e3;
   vec4 O = vec4(0.0);
-  for (int k = 0; k < 39; k++) {
+  for (int k = 0; k < ${sceneSteps}; k++) {
     if (d <= 1e-4) break;
     O = z * normalize(vec4(P, uZoom, 0.0)) - vec4(0.0, 4.0, 1.0, 0.0) / 4.5;
     d = 1.0 - sqrt(length(O * O));
@@ -145,7 +145,7 @@ void mainImage(out vec4 o, vec2 C) {
   vec2 rr = vec2(max(length(fw), 1e-5));
   float tail = 19.0 / max(uStreakLength, 0.05);
 
-  for (int m = 0; m < 16; m++) {
+  for (int m = 0; m < ${streakSlots}; m++) {
     if (m >= uStreakCount) break;
     float jf = float(m) + 1.0;
     float ic = fract(sin(dot(vec2(jf, floor(C.x / Y.x + 0.5)), vec2(7.0, 11.0)) * 73.0));
@@ -204,6 +204,7 @@ const Lightfall = ({
   mouseDampening = 0.15,
   lightMode = false,
   mixBlendMode,
+  quality = 'high',
 }) => {
   const containerRef = useRef(null)
   const rafRef = useRef(null)
@@ -218,11 +219,25 @@ const Lightfall = ({
     const container = containerRef.current
     if (!container) return undefined
 
-    const renderer = new Renderer({
-      dpr: dpr ?? (window.devicePixelRatio || 1),
-      alpha: true,
-      antialias: true,
+    const lowQuality = quality === 'low'
+    const fragment = createFragment({
+      precision: lowQuality ? 'mediump' : 'highp',
+      sceneSteps: lowQuality ? 18 : 39,
+      streakSlots: lowQuality ? 6 : 16,
     })
+
+    let renderer
+    try {
+      renderer = new Renderer({
+        dpr: dpr ?? (window.devicePixelRatio || 1),
+        alpha: true,
+        antialias: !lowQuality,
+      })
+    } catch (error) {
+      console.warn('Lightfall WebGL background is unavailable; using the CSS fallback.', error)
+      container.dataset.fallback = 'true'
+      return undefined
+    }
     rendererRef.current = renderer
     const gl = renderer.gl
     const canvas = gl.canvas
@@ -248,7 +263,7 @@ const Lightfall = ({
       uBgColor: { value: hexToRGB(backgroundColor) },
       uMouseColor: { value: avg },
       uSpeed: { value: speed },
-      uStreakCount: { value: Math.max(1, Math.min(16, Math.round(streakCount))) },
+      uStreakCount: { value: Math.max(1, Math.min(lowQuality ? 6 : 16, Math.round(streakCount))) },
       uStreakWidth: { value: streakWidth },
       uStreakLength: { value: streakLength },
       uGlow: { value: glow },
@@ -263,7 +278,15 @@ const Lightfall = ({
       uLightMode: { value: lightMode ? 1 : 0 },
     }
 
-    const program = new Program(gl, { vertex, fragment, uniforms })
+    let program
+    try {
+      program = new Program(gl, { vertex, fragment, uniforms })
+    } catch (error) {
+      console.warn('Lightfall shader could not be compiled; using the CSS fallback.', error)
+      container.dataset.fallback = 'true'
+      if (canvas.parentElement === container) container.removeChild(canvas)
+      return undefined
+    }
     programRef.current = program
     const geometry = new Triangle(gl)
     geometryRef.current = geometry
@@ -276,8 +299,9 @@ const Lightfall = ({
       uniforms.iResolution.value = [gl.drawingBufferWidth, gl.drawingBufferHeight, 1]
     }
     resize()
-    const resizeObserver = new ResizeObserver(resize)
-    resizeObserver.observe(container)
+    const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(resize)
+    resizeObserver?.observe(container)
+    if (!resizeObserver) window.addEventListener('resize', resize, { passive: true })
 
     const onPointerMove = (event) => {
       const rect = canvas.getBoundingClientRect()
@@ -287,7 +311,7 @@ const Lightfall = ({
       mouseTargetRef.current = [x, y]
       if (mouseDampening <= 0) uniforms.iMouse.value = [x, y]
     }
-    if (mouseInteraction) canvas.addEventListener('pointermove', onPointerMove)
+    if (mouseInteraction) window.addEventListener('pointermove', onPointerMove, { passive: true })
 
     const loop = (time) => {
       rafRef.current = requestAnimationFrame(loop)
@@ -312,8 +336,9 @@ const Lightfall = ({
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
-      if (mouseInteraction) canvas.removeEventListener('pointermove', onPointerMove)
-      resizeObserver.disconnect()
+      if (mouseInteraction) window.removeEventListener('pointermove', onPointerMove)
+      resizeObserver?.disconnect()
+      if (!resizeObserver) window.removeEventListener('resize', resize)
       if (canvas.parentElement === container) container.removeChild(canvas)
       const callIfFunction = (object, key) => {
         if (object && typeof object[key] === 'function') object[key].call(object)
@@ -330,7 +355,7 @@ const Lightfall = ({
   }, [
     dpr, paused, colors, backgroundColor, speed, streakCount, streakWidth,
     streakLength, glow, density, twinkle, zoom, backgroundGlow, opacity,
-    mouseInteraction, mouseStrength, mouseRadius, mouseDampening, lightMode,
+    mouseInteraction, mouseStrength, mouseRadius, mouseDampening, lightMode, quality,
   ])
 
   return (

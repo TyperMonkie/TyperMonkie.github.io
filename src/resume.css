@@ -35,16 +35,20 @@ html[data-site='resume'] #root {
 .resume-lightfall {
   position: fixed;
   inset: 0;
-  z-index: -4;
+  z-index: 0;
   width: 100vw;
   height: 100svh;
-  background: #03020a;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 52% 34%, rgba(82, 39, 255, .32), transparent 46%),
+    radial-gradient(ellipse at 28% 72%, rgba(255, 159, 252, .12), transparent 42%),
+    #03020a;
 }
 
 .resume-vignette {
   position: fixed;
   inset: 0;
-  z-index: -3;
+  z-index: 1;
   pointer-events: none;
   background:
     radial-gradient(circle at 50% 42%, transparent 20%, rgba(3, 2, 10, .12) 54%, rgba(3, 2, 10, .76) 112%),
@@ -63,7 +67,7 @@ html[data-site='resume'] #root {
 
 .resume-hero {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: grid;
   min-height: 100svh;
   place-items: center;
