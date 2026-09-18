@@ -222,11 +222,15 @@ const Lightfall = ({
     const container = containerRef.current
     if (!container) return undefined
 
-    const lowQuality = quality === 'low'
+    const qualityProfile = quality === 'low'
+      ? { precision: 'mediump', sceneSteps: 18, streakSlots: 6, antialias: false }
+      : quality === 'balanced'
+        ? { precision: 'highp', sceneSteps: 24, streakSlots: 8, antialias: false }
+        : { precision: 'highp', sceneSteps: 39, streakSlots: 16, antialias: true }
     const fragment = createFragment({
-      precision: lowQuality ? 'mediump' : 'highp',
-      sceneSteps: lowQuality ? 18 : 39,
-      streakSlots: lowQuality ? 6 : 16,
+      precision: qualityProfile.precision,
+      sceneSteps: qualityProfile.sceneSteps,
+      streakSlots: qualityProfile.streakSlots,
     })
 
     let renderer
@@ -234,7 +238,7 @@ const Lightfall = ({
       renderer = new Renderer({
         dpr: dpr ?? (window.devicePixelRatio || 1),
         alpha: true,
-        antialias: !lowQuality,
+        antialias: qualityProfile.antialias,
       })
     } catch (error) {
       console.warn('Lightfall WebGL background is unavailable; using the CSS fallback.', error)
@@ -266,7 +270,7 @@ const Lightfall = ({
       uBgColor: { value: hexToRGB(backgroundColor) },
       uMouseColor: { value: avg },
       uSpeed: { value: speed },
-      uStreakCount: { value: Math.max(1, Math.min(lowQuality ? 6 : 16, Math.round(streakCount))) },
+      uStreakCount: { value: Math.max(1, Math.min(qualityProfile.streakSlots, Math.round(streakCount))) },
       uStreakWidth: { value: streakWidth },
       uStreakLength: { value: streakLength },
       uGlow: { value: glow },

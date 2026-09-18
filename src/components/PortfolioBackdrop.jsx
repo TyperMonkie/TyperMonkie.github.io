@@ -12,7 +12,7 @@ function PortfolioBackdrop() {
           colors={LIGHTFALL_COLORS}
           backgroundColor="#0A29FF"
           speed={1}
-          streakCount={8}
+          streakCount={isMobile ? 6 : 8}
           streakWidth={1}
           streakLength={1}
           glow={1}
@@ -25,8 +25,8 @@ function PortfolioBackdrop() {
           mouseInteraction={!isMobile}
           mouseStrength={1}
           mouseRadius={0.6}
-          dpr={Math.min(window.devicePixelRatio || 1, 1.75)}
-          quality="high"
+          dpr={Math.min(window.devicePixelRatio || 1, isMobile ? 1.3 : 1.75)}
+          quality={isMobile ? 'balanced' : 'high'}
         />
       </div>
       <div className="resume-vignette" aria-hidden="true" />
