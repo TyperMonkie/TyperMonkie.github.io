@@ -1,7 +1,7 @@
 ---
 title: KAD基于单张深度图预测3d手部关节位置网络
 date: 2026-09-16
-category: 灵巧手论文学习
+category: 灵巧手学习
 summary: KAD
 ---
 
